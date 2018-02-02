@@ -1,0 +1,11 @@
+cycler==0.10.0
+matplotlib==2.1.2
+music21==4.1.0
+numpy==1.14.0
+Pillow==5.0.0
+pygame==1.9.3
+pyparsing==2.2.0
+python-dateutil==2.6.1
+pytz==2017.3
+scipy==1.0.0
+six==1.11.0
