@@ -26,6 +26,7 @@ class Score:
         '''
         self.name = filename
         self.parsed_score = None
+        self.voice_notes = None
         self.voices = None
         self.voice_count = None
         self.melodicIntervals = None
@@ -34,6 +35,7 @@ class Score:
         self.voice_split(self.parsed_score)
         self.get_melodic_interval(self.voices, self.voice_count)
         self.get_abstract_contour(self.melodicIntervals, self.voice_count)
+        self.sequences = []
 
     def kern_parse(self, filename):
         '''
@@ -92,18 +94,21 @@ class Score:
 
         # Intitate the list containing the melodic intervals
         score_voices_intervals = []
+        score_voices_notes = []
         # For each voice in the composition
         for i in range(0, voice_count, 1):
             # Rid notation that effects parsing
             score = voices[i].flat
             # Get the notes of that voice in a list
             score = score.notes.stream()
+            score_voices_notes.append(score)
             # calculates the melodic intervals for each note pair
             score = score.melodicIntervals()
             # append the list of intervals to the list containing melodic
             # intervals
             score_voices_intervals.append(score)
         # Update self value from None
+        self.voice_notes = score_voices_notes
         self.melodicIntervals = score_voices_intervals
 
     def get_abstract_contour(self, melodicIntervals, voice_count):
@@ -144,7 +149,3 @@ class Score:
             voices_abstract_contours.append(voice_abstract_contour)
         # update the self value from None
         self.contour_abstract = voices_abstract_contours
-
-
-bwv0253 = Score('bwv0253')
-print(bwv0253.contour_abstract)

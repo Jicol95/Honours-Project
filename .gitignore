@@ -1,4 +1,5 @@
 /Honours_Project
-/.git
+/__pycache__
 /Music
 /.gitignore
+/.git
