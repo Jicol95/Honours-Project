@@ -31,6 +31,7 @@ class Score:
         self.voice_count = None
         self.melodicIntervals = None
         self.contour_abstract = None
+        self.contour_suffix_array = None
         self.kern_parse(self.name)
         self.voice_split(self.parsed_score)
         self.get_melodic_interval(self.voices, self.voice_count)
@@ -55,7 +56,6 @@ class Score:
         # Uses the music21 library to convert kern to a music21 object
         score = converter.parse(filepath)
         self.parsed_score = score
-
     def voice_split(self, score):
         '''
         This function splits up a score of many voices into an array of voice
@@ -149,3 +149,6 @@ class Score:
             voices_abstract_contours.append(voice_abstract_contour)
         # update the self value from None
         self.contour_abstract = voices_abstract_contours
+
+    def get_contour_suffix_array(self):
+        pass
