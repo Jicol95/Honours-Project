@@ -65,100 +65,52 @@ class Analyse:
                 match_composition.parts[i].insert(range_start,match_range)
         match_composition.show()
 
-    def common_patterns(self, list_of_scores):
+    def common_patterns(self, sequences):
 
+        list_of_sequences = []
         # Just a bit of house keeping, the scores are in the form of lists but
         # I need them as strings in only this function. Hence the "hack-ish" code
-        for score in list_of_scores:
-            score = str(score)
-        # Order the list of scores by length of list
-        list_of_scores = sorted(list_of_scores, key=len, reversed=True)
-        # Unredacted version of list_of_scores
-        master_list = list_of_scores
-        # Construct the generalised suffix tree of list of scores
-        st = STree.STree(list_of_scores)
-        # This will contain our list of matches
+        for sequence in sequences:
+            voice = "".join(sequence)
+            list_of_sequences.append(voice)
+
+        # To be as fast as possible we window search the smallest string
+        list_of_sequences = sorted(list_of_sequences, key=len)
+        # Construct the genralised suffix tree
+        suffix_tree = STree.STree(list_of_sequences)
+        # List of common sequences
         matches = []
-        # This is where matches which are yet to be processed are stored
-        queue = []
-
-        # Continue to do this until there is no common strings
-        while st.lcs() != "":
-            # Find the longest common substring and it's start and end point
-            longest_common_substring = st.lcs()
-            lcs_start = master_list[0].find(longest_common_substring)
-            lcs_end = lcs_start + len(longest_common_substring)
-
-            # If we don't have a match in our queue
-            if not queue:
-                # If the longest common substring isnt in the list of matches then add it
-                if not any([(longest_common_substring in match) for match in matches]):
-                    matches.append(longest_common_substring)
-                    lookback = list(longest_common_substring)
-
-                    # Redact the matched pattern one byte at a time left to right
-                    for i in range(lcs_start, lcs_end):
-                        # Strings are imutable so we change the type for a moment
-                        TEMP = list(list_of_scores[0])
-                        # Redact with 'x'
-                        TEMP[i] = 'x'
-                        # Convert back to string
-                        list_of_scores[0] = "".join(TEMP)
-                        # Rebuild the suffix tree with new strings
-                        st = STree.STree(list_of_scores)
-                        # Add any new pattern to the queue
-                        if (st.lcs() != longest_common_substring and
-                            st.lcs() not in queue and
-                            st.lcs not in matches):
-
-                            queue.append(st.lcs())
-
-                    # Remove the redaction one byte at a time left to right
-                    for i in range(lcs_start, lcs_end):
-                        # Strings are imutable so we change the type for a moment
-                        TEMP = list(list_of_scores[0])
-                        # Remove the oldest char in lookback and insert into TEMP[i]
-                        TEMP[i] = lookback.pop(0)
-                        # Convert back to string
-                        list_of_scores[0] = "".join(TEMP)
-                        # Rebuild the suffix tree with new strings
-                        st = STree.STree(list_of_scores)
-                        # Add any new pattern to the queue
-                        if (st.lcs() != longest_common_substring and
-                            st.lcs() not in queue and
-                            st.lcs not in matches):
-
-                            queue.append(st.lcs())
-
-                    # Get enough x's to redact the pattern
-                    redaction = 'x' * len(longest_common_substring)
-                    # Replace the first occurence of the pattern with the x's
-                    list_of_scores[0].replace(longest_common_substring, redaction,1)
-
-                    # Re-Instantiate the lookback becuase we used pop()
-                    lookback = list(longest_common_substring)
-                    # Remove the redaction one byte at a time right to left
-                    for i in range(lcs_end-1, lcs_start-1, -1):
-                        # Strings are imutable so we change the type for a moment
-                        TEMP = list(list_of_scores[0])
-                        # Remove the newest char in lookback and insert into TEMP [i]
-                        TEMP[i] = lookback.pop()
-                        # Convert back to string
-                        list_of_scores[0] = "".join(TEMP)
-                        # Rebuild the suffix tree with new strings
-                        st = STree.STree(list_of_scores)
-                        # Add any new pattern to the queue
-                        if (st.lcs() != longest_common_substring and
-                            st.lcs() not in queue and
-                            st.lcs not in matches):
-
-                            queue.append(st.lcs())
-
-                    # Get enough x's to redact the pattern
-                    redaction = 'x' * len(longest_common_substring)
-                    # Replace the first occurence of the pattern with the x's
-                    list_of_scores[0].replace(longest_common_substring, redaction,1)
-
-                if not(lookback) and not(queue):
-                    break
-            print(matches)
+        # search window size
+        window_size = len(suffix_tree.lcs())
+        # Lower bound of the search window
+        window_lower = 0
+        # Upper bound of the search window
+        window_upper = window_lower + window_size
+        # If window size is 0 then suffix_tree.lcs() returned ""
+        if window_size == 0:
+            print('no match')
+        # If there was a match then append it
+        else:
+            matches.append(suffix_tree.lcs())
+        # Do this until the window size is 0
+        while window_size != 0:
+            # Create a copy of the sequence list
+            list_of_sequences_copy = list_of_sequences[:]
+            # Redefine the first element of the copy to only the elements in the window
+            list_of_sequences_copy[0] = list_of_sequences[0][window_lower:window_upper]
+            # Rebuild the suffix tree
+            suffix_tree = STree.STree(list_of_sequences_copy)
+            # If an unseen match is found and is not empty then append it
+            if not suffix_tree.lcs() in matches and suffix_tree.lcs() != "":
+                matches.append(suffix_tree.lcs())
+            # shift the window one to the right
+            window_lower += 1
+            window_upper += 1
+            # Once the upper bound of the window touches the end or the string
+            if window_upper == len(list_of_sequences[0]) - 1:
+                # Decrease the window size by one
+                window_size -= 1
+                # Reset the window back to the start
+                window_lower = 0
+                window_upper = window_lower + window_size
+        print(matches)

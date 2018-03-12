@@ -1,16 +1,18 @@
 from suffix_trees import STree
 
 # Hard coded test case for this script represents 2 scores contour_abstract
-a = ["+++0000+-+-0","+-+0+++0-+-00000","+-+-+00+++-0-0000"]
-aMaster = a
+a = ['0-++++-++--0--+++---++0-++-0-++-++--++--+--+++---', '++-+0+---++--+0--+00-++-+-+0----+0-+-+-++--+0--', '00000--++0---+----+-++-++++00-+-++++----++++---++--+-', '-+---++-+-+-----+--+++++--+++++----+++-+-+++-++-----+-']
 # It is crucial that they are sorted longest to shortest
 a = sorted(a,key=len, reverse=True)
+aMaster = a
+print(a)
 # Build a genralised suffix tree with a
 st = STree.STree(a)
 # Instantiate list that will contain common patterns
 matches = []
 queue = []
 
+a = aMaster
 while st.lcs() != "":
     # If there is nothing in the queue
     if not queue:
@@ -24,28 +26,32 @@ while st.lcs() != "":
         lcs_end = lcs_start + len(longest_common_substring)
 
     # If the longest common substring isnt in the list of matches then add it
-    if not any([(longest_common_substring in match) for match in matches]):
+    if not longest_common_substring in matches:
         matches.append(longest_common_substring)
         lookback = list(longest_common_substring)
 
         # Go through and redact the match left to right one char at a time checking
         # if a new longest common substring has been forced
         for i in range(lcs_start, lcs_end):
+            print(a[0])
             TEMP = list(a[0])
             TEMP[i] = 'x'
             a[0] = "".join(TEMP)
             st = STree.STree(a)
-            if st.lcs() != longest_common_substring and st.lcs() not in queue and st.lcs not in matches:
+            print(st.lcs())
+            if st.lcs() != longest_common_substring and st.lcs() not in queue and st.lcs not in matches and len(st.lcs()) >= 2:
                 queue.append(st.lcs())
 
         # Remove the redaction one char at a time left to right
         lookback = list(longest_common_substring)
         for i in range(lcs_start,lcs_end):
+            print(a[0])
             TEMP = list(a[0])
             TEMP[i] = lookback.pop(0)
             a[0] = "".join(TEMP)
             st = STree.STree(a)
-            if st.lcs() != longest_common_substring and st.lcs() not in queue and st.lcs not in matches:
+            print(st.lcs())
+            if st.lcs() != longest_common_substring and st.lcs() not in queue and st.lcs not in matches and len(st.lcs()) >= 2:
                 queue.append(st.lcs())
 
             redaction = 'x' * len(longest_common_substring)
@@ -55,17 +61,18 @@ while st.lcs() != "":
         # Remove the redaction one char at a time right to left
         lookback = list(longest_common_substring)
         for i in range(lcs_end-1,lcs_start-1, -1):
+            print(a[0])
             TEMP = list(a[0])
             TEMP[i] = lookback.pop()
             a[0] = "".join(TEMP)
             st = STree.STree(a)
-            if st.lcs() != longest_common_substring and st.lcs() not in queue and st.lcs not in matches:
+            print(st.lcs())
+            if st.lcs() != longest_common_substring and st.lcs() not in queue and st.lcs not in matches and len(st.lcs()) >= 2:
                 queue.append(st.lcs())
 
         redaction = 'x' * len(longest_common_substring)
         # Redact the string
         a[0] = a[0].replace(longest_common_substring, redaction,1)
-
     if not(lookback) and not(queue):
         break
 print(matches)
@@ -81,9 +88,9 @@ print(matches)
 #         TEMP[i-1] = lookback
 #         a[0] = "".join(TEMP)
 #
-#     lookback = a[0][i]
+#     lookback = a[0][0]
 #     a[0] = list(a[0])
-#     a[0][i] = 'x'
+#     a[0][0] = 'x'
 #     a[0] = "".join(a[0])
 #     st = STree.STree(a)
 #
