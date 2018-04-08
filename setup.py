@@ -14,17 +14,16 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
 
-    name='Kontour',  # Required
-    version='1.0.0',  # Required
-    description='Finds common melodic phrases in **kern encoded music.',  # Required
+    name='Kontour',
+    version='1.0.1',
+    description='Finds common melodic phrases in **kern encoded music.',
     url='https://github.com/Jicol95/Kontour',
     author='Jack Nicol',
-    author_email='jack.nicol95@gmail.com',  # Optional
+    author_email='jack.nicol95@gmail.com',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers, Musicologists',
-        'Topic :: Software Development :: Music Theory',
-        'License :: OSI Approved :: Apache License 2.0',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -43,8 +42,6 @@ setup(
                       'scipy==1.0.0',
                       'six==1.11.0',
                       'suffix-trees==0.2.4.4'],
-
-    data_files=[('Results'),('Music')],
 
     entry_points={
         'console_scripts': [
