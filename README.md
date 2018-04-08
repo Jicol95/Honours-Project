@@ -42,6 +42,6 @@ __Search Options:__
 
 
 # License
-Apache License 2.0
+__Apache License 2.0__
 
 See LICENSE.md for details
