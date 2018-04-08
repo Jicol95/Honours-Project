@@ -51,11 +51,12 @@ class Score:
         '''
 
         # Denotes the path to the collection of music
-        filepath = ['Music/chorales/', filename, '.krn']
+        filepath = ['Music/', filename, '.krn']
         filepath = ''.join(filepath)
         # Uses the music21 library to convert kern to a music21 object
         score = converter.parse(filepath)
         self.parsed_score = score
+
     def voice_split(self, score):
         '''
         This function splits up a score of many voices into an array of voice

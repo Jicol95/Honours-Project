@@ -1,20 +1,24 @@
-from music21 import clef, stream, metadata, humdrum
+from music21 import clef, stream, humdrum, note, editorial, metadata
 from suffix_trees import STree
 from Score import Score
 
 
 class Analyse:
 
-    def __init__(self):
-        pass
+    def __init__(self, export, parsed_score):
+        self.viewers = export
+        self.score = parsed_score
+
+    def score_refresh(self, score):
+        self.score = score
 
     # Returns the indexs of the begining of all substring instances
-    def find_sequence(self, parsed_score, sub_string):
+    def find_sequence(self, sub_string):
         listindex = []
         # For the length of the main string
-        for i in range(0, len(parsed_score.contour_abstract)):
-            # Convert parsed_score.contour_abstract to string from list
-            string = ''.join(parsed_score.contour_abstract[i])
+        for i in range(0, len(self.score.contour_abstract)):
+            # Convert self.score.contour_abstract to string from list
+            string = ''.join(self.score.contour_abstract[i])
             # Declare listindex_tmp list which will hold the indexes
             listindex_tmp = []
             # Pattern length
@@ -29,7 +33,7 @@ class Analyse:
                     # append the start index of the substring to listindex_tmp
                     listindex_tmp.append((j, j + pattern_length))
                 # If the pattern found overlaps with the last pattern
-                elif j <= listindex_tmp[-1][1]:
+                elif j < listindex_tmp[-1][1]:
                     # Extend the last tuple upper bound to the upper bound of
                     # the new match
                     listindex_tmp[-1] = list(listindex_tmp[-1])
@@ -48,22 +52,32 @@ class Analyse:
 
     # Print the found sequences in the music
     def Search_Score(self, filename, sequence):
-        # Create an instance of the score
-        parsed_score = Score(filename)
-        # Create an instance of the analysis engine
-        pattern_engine = Analyse()
         # Get the series of notes
-        voice_notes = parsed_score.voice_notes
+        voice_notes = self.score.voice_notes
         # Get the start indexs of the matching substrings in the sequence
-        seq_len, match_index = pattern_engine.find_sequence(parsed_score, sequence)
-        match_composition = parsed_score.parsed_score.template()
+        seq_len, match_index = self.find_sequence(sequence)
+        # Get a copy of the score
+        match_composition = self.score.parsed_score
+        # Edit the title of the score to indicate the sequence
+        match_composition.metadata.title = match_composition.metadata.title + ': ' + sequence
         # For each match
         for i in range(0, len(match_index)):
-            for sequence_range in match_index[i]:
-                match_range = voice_notes[i][sequence_range[0]:sequence_range[1]]
-                range_start = voice_notes[i][sequence_range[0]].offset
-                match_composition.parts[i].insert(range_start,match_range)
-        match_composition.show()
+            keep_note_index = []
+            for boundary in match_index[i]:
+                keep_note_index += list(range(boundary[0], boundary[1]))
+            for elem in voice_notes[i]:
+                if voice_notes[i].index(elem) not in keep_note_index:
+                    r = note.SpacerRest(type=elem.duration.type)
+                    loc = voice_notes[i].index(elem)
+                    match_composition.parts[i].flat.replace(elem, r)
+        if len(self.viewers) == 2:
+            match_composition.write('lily.pdf', fp = 'Results/' + self.score.name + '_' + sequence)
+            match_composition.show()
+        elif self.viewers[0] == "MuseScore":
+            match_composition.show()
+        elif self.viewers[0] == "LillyPond":
+            match_composition.write('lily.pdf', fp = 'Results/' + self.score.name + '_' + sequence)
+
 
     def common_patterns(self, sequences):
 
@@ -89,6 +103,9 @@ class Analyse:
         # If window size is 0 then suffix_tree.lcs() returned ""
         if window_size == 0:
             print('no match')
+        elif suffix_tree.lcs() == list_of_sequences[0]:
+            matches.append(suffix_tree.lcs())
+            return matches
         # If there was a match then append it
         else:
             matches.append(suffix_tree.lcs())
@@ -101,7 +118,7 @@ class Analyse:
             # Rebuild the suffix tree
             suffix_tree = STree.STree(list_of_sequences_copy)
             # If an unseen match is found and is not empty then append it
-            if not suffix_tree.lcs() in matches and suffix_tree.lcs() != "":
+            if not suffix_tree.lcs() in matches and suffix_tree.lcs() != "" and len(suffix_tree.lcs())>= 5:
                 matches.append(suffix_tree.lcs())
             # shift the window one to the right
             window_lower += 1
@@ -113,4 +130,4 @@ class Analyse:
                 # Reset the window back to the start
                 window_lower = 0
                 window_upper = window_lower + window_size
-        print(matches)
+        return matches

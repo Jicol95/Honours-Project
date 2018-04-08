@@ -3,3 +3,7 @@
 /Music
 /.gitignore
 /.git
+/Kontour.egg-info
+/Legacy
+/__pycache__
+/dist
