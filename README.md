@@ -21,9 +21,7 @@ optional arguments:
 
   -h, --help            show this help message and exit
 
-  -f FILENAME, --filename FILENAME
-
-                        Takes one argument; the name of the file
+  -f FILENAME, --filename FILENAME Takes one argument, the name of the file
 
 
 Export Options:
