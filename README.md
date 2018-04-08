@@ -15,16 +15,16 @@ You can also grab it directly from pip
 
 main [-h] -f FILENAME [-s SEQUENCE] [-ms] [-pdf]
 
-Finds common melodic phrases in kern encoded music.
 
-optional arguments:
+
+__optional arguments:__
 
   -h, --help            show this help message and exit
 
   -f FILENAME, --filename FILENAME Takes one argument, the name of the file
 
 
-Export Options:
+__Export Options:__
 
   Allows the user to specify how to view the results.
 
@@ -33,7 +33,7 @@ Export Options:
   -pdf, --lillypond     Indicates that the user wants to export the results to pdf using LillyPond.
 
 
-Search Options:
+__Search Options:__
 
   Different search options.
 
