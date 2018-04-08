@@ -13,7 +13,7 @@ You can also grab it directly from pip
 
 # Usage
 
-main [-h] -f FILENAME [-s SEQUENCE] [-ms] [-pdf]
+__Kontour__ [-h] -f FILENAME [-s SEQUENCE] [-ms] [-pdf]
 
 
 
