@@ -15,7 +15,7 @@ here = path.abspath(path.dirname(__file__))
 setup(
 
     name='Kontour',
-    version='1.0.1',
+    version='1.0.3',
     description='Finds common melodic phrases in **kern encoded music.',
     url='https://github.com/Jicol95/Kontour',
     author='Jack Nicol',
@@ -43,11 +43,10 @@ setup(
                       'six==1.11.0',
                       'suffix-trees==0.2.4.4'],
 
+    scripts=['main.py', 'Score.py', 'Analyse.py'],
+
     entry_points={
-        'console_scripts': [
-            'Kontour=main:Main',
-        ],
-    },
+        'console_scripts': ['kontour = main:Main']},
     project_urls={  # Optional
         'Bug Reports': 'https://github.com/Jicol95/Kontour/issues',
         'Say Thanks!': 'Jack.Nicol95@gmail.com',
