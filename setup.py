@@ -19,7 +19,7 @@ setup(
     description='Finds common melodic phrases in **kern encoded music.',
     url='https://github.com/Jicol95/Kontour',
     author='Jack Nicol',
-    author_email='jack.nicol95@gmail.com',
+    author_email='Jack.Nicol95@gmail.com',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -45,9 +45,11 @@ setup(
 
     scripts=['main.py', 'Score.py', 'Analyse.py'],
 
+    package_data={'Results':['*'], 'Music':['*']},
+
     entry_points={
         'console_scripts': ['kontour = main:Main']},
-    project_urls={  # Optional
+    project_urls={
         'Bug Reports': 'https://github.com/Jicol95/Kontour/issues',
         'Say Thanks!': 'Jack.Nicol95@gmail.com',
         'Source': 'https://github.com/Jicol95/Kontour',
