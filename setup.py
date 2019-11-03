@@ -35,7 +35,7 @@ setup(
                       'matplotlib==2.1.2',
                       'music21==4.1.0',
                       'numpy==1.14.0',
-                      'Pillow==5.0.0',
+                      'Pillow==6.2.0',
                       'pygame==1.9.3',
                       'python-dateutil==2.6.1',
                       'pytz==2017.3',
